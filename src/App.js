@@ -1,103 +1,68 @@
 import React, { Component } from 'react';
-import HistoryModal from './components/HistoryModal';
 import './App.css';
-import axios from 'axios';
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      username: '',
-      message: '',
-      allMessages: [],
-      messageInputDisabled: true,
-      showHistory: false
-    };
-    this.closeHistoryModal = this.closeHistoryModal.bind(this);
-  }
-
-  componentDidMount() {
-    axios.get('/api/messages').then(res => {
-      this.setState({ allMessages: res.data });
-    });
-  }
-
-  createMessage() {
-    let { username, message } = this.state;
-    axios
-      .post('/api/messages', { username: username, message: message })
-      .then(res => {
-        this.setState({ allMessages: res.data });
-      });
-  }
-
-  saveUsername() {
-    if (this.state.username) {
-      this.setState({ messageInputDisabled: !this.state.messageInputDisabled });
+      result: null,
+      firstNum: null,
+      secondNum: null
     }
   }
 
-  showHistoryModal() {
-    this.setState({ showHistory: true });
+  calculate() {
+    let { firstNum, secondNum } = this.state;
+    let sum = +firstNum + +secondNum;
+    this.setState({
+      result: sum,
+      firstNum: '',
+      secondNum: '',
+      cost: '',
+      quatity: '',
+      taxRate: ''
+    })
   }
-  closeHistoryModal() {
-    this.setState({ showHistory: false });
+
+  calcTotal() {
+    let { cost, quantity, taxRate } = this.state;
+    let subTotal = cost * quantity;
+    let tax = subTotal * taxRate / 100;
+    this.setState({
+      total: tax + subTotal
+    })
   }
 
   render() {
-    let allMessages = this.state.allMessages.map((messageObj, i) => {
-      return (
-        <div className="message" key={i}>
-          <span>{messageObj.username}</span>
-          <span>{messageObj.message}</span>
-        </div>
-      );
-    });
-
     return (
-      <div className="app">
-        <div className="content">
-          <div className="messages-wrapper">{allMessages}</div>
-          <div className="input-wrapper">
-            <input
-              disabled={!this.state.messageInputDisabled}
-              onChange={e => this.setState({ username: e.target.value })}
-              value={this.state.username}
-              type="text"
-              className="input-username"
-              placeholder="Type in username..."
-            />
-            <button
-              className="button-username"
-              onClick={() => this.saveUsername()}>
-              {this.state.messageInputDisabled ? 'save' : 'update'}
-            </button>
-            <input
-              disabled={this.state.messageInputDisabled}
-              onChange={e => this.setState({ message: e.target.value })}
-              value={this.state.message}
-              type="text"
-              className="input-message"
-              placeholder={
-                this.state.messageInputDisabled
-                  ? 'Create a username before you send a message'
-                  : 'Type in message...'
-              }
-            />
-            <button
-              onClick={() => this.createMessage()}
-              disabled={this.state.messageInputDisabled}
-              className="button-message">
-              send
-            </button>
-            <button onClick={() => this.showHistoryModal()}>history</button>
-          </div>
-        </div>
+      <div className="App">
+        <h1>Let's do some math!</h1>
+        <br />
+        <input
+          value={this.state.firstNum}
+          type="number"
+          onChange={(e) => this.setState({ firstNum: e.target.value })} />
+        <span>+</span>
+        <input
+          value={this.state.secondNum}
+          type="number"
+          onChange={(e) => this.setState({ secondNum: e.target.value })} />
+        <br /><br />
+        <button onClick={() => this.calculate()}>Calculate</button>
+        {
+          this.state.result ? (
+            <p>Result is {this.state.result}</p>
+          ) : null
+        }
 
-        {/* If this.state.showHistory === true, modal will be displayed */}
-        {this.state.showHistory ? (
-          <HistoryModal closeHistoryModal={this.closeHistoryModal} />
-        ) : null}
+        <hr />
+        <p>Cost of item <input type="text" onChange={e => this.setState({ cost: e.target.value })} /></p>
+        <p>Quantity <input type="text" onChange={e => this.setState({ quantity: e.target.value })} /></p>
+        <p>Sales tax % <input type="text" onChange={e => this.setState({ taxRate: e.target.value })} /></p>
+        <br />
+        <button onClick={() => this.calcTotal()}>Calculate</button>
+        <p>Total cost: {this.state.total}</p>
+
       </div>
     );
   }

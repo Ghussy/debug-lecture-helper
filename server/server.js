@@ -6,6 +6,9 @@ const session = require('express-session');
 
 const app = express();
 
+let { SESSION_SECRET, SERVER_PORT } = process.env;
+app.use(express.json())
+
 app.use(
   session({
     secret: SESSION_SECRET,
