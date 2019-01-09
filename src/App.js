@@ -24,11 +24,12 @@ class App extends Component {
   }
   getGreenVehicles() {
     axios.get(this.state.baseUrl + '?color=green')
-      .then(res => this.setState({ vehicles: res.data.vehicles }))
+      .then(res => this.setState({ vehicles: res.data }))
   }
   getFords() {
     axios.get(this.state.baseUrl + '?make=tesla')
       .then(res => this.setState({ vehicles: res.data }))
+      
   }
 
   render() {
@@ -51,7 +52,7 @@ class App extends Component {
         <h4>Vehicles:</h4>
         <div className='card-container'>
           {
-            this.state.vehicles.map(vehicle => <Card key={vehicle.id} vehicle={vehicle} />)
+            this.state.vehicles.map(vehicle => <Card key={vehicle.id} vehicle={vehicle} /> )
           }
         </div>
       </div>
